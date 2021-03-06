@@ -15,19 +15,28 @@ export default class Connections {
   }
 
   static get Instance() {
-    if (!this.instance) this.instance = new Connections();
+    log.trace("getting Instance")
+    if (!this.instance) {
+      log.debug("Instance was not created before, creating one.")
+      this.instance = new Connections();
+    } else {
+      log.debug("Instance was created before, reusing one.")
+    }
     return this.instance;
   }
 
   push(connection: SocketStream): void {
+    log.trace("called push()");
     this.connections.push(connection);
   }
 
   forEach(callbackfn: (value: SocketStream, index: number, array: SocketStream[]) => void): void {
+    log.trace("called forEach()");
     this.connections.forEach(callbackfn);
   }
 
   remove(connection: SocketStream): void {
+    log.trace("called remove()");
     this.connections.filter((v) => v !== connection);
   }
 }
