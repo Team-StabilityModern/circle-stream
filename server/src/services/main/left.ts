@@ -8,20 +8,29 @@ import type { FastifyNormalRequest } from "../../types/misc";
 const connections = Connections.Instance;
 
 /**
- * the action to do when somebody left.
+ * The action to do when somebody left (connection closed).
  */
 export function left(
   connection: SocketStream,
   { ip, log }: FastifyNormalRequest,
   { as }: IParam,
 ): void {
-  const message = createResponseJson(as, ip, MessageType.USER_LEFT, "");
-  log.info(`${as} quitted.`);
+  log.info(`${as} left.`);
 
-  connections.push(connection);
+  // Construct the response.
+  const message = createResponseJson(as, ip, MessageType.USER_LEFT, "");
+  // Push this connection to the connection pool.
+  connections.remove(connection);
+  // Send the message to every connections.
   connections.forEach((c) => c.socket.send(message));
 }
 
+/**
+ * The wrapper to be used on "close" event of WebSocket.
+ * @param request The request from wsHandler()
+ * @param params The parameter of the request from wsHandler()
+ * @returns The function that can be used directly in `.on("close")`
+ */
 export function leftWrapper(
   connection: SocketStream,
   request: FastifyNormalRequest,

@@ -7,9 +7,18 @@ import {
 } from "../../types/MessageArchitect";
 import type { FastifyNormalRequest } from "../../types/misc";
 
+/**
+ * The pool stored all the WebSocket connections.
+ */
 const connections = Connections.Instance;
 
-const sendWhat = (as: string, mt: MessageType) => {
+/**
+ * Return the suitable log based on the MessageType.
+ * @param as The sender.
+ * @param mt The message type.
+ * @returns The suitable log message.
+ */
+const sendWhat = (as: string, mt: MessageType): string => {
   switch (mt) {
     case MessageType.BINARY:
       return `${as} sent a binary.`;
@@ -21,7 +30,7 @@ const sendWhat = (as: string, mt: MessageType) => {
 };
 
 /**
- * the action to do when somebody sent a message.
+ * The action to do when somebody sent a message. ("message" emitted)
  */
 export function onMessage(
   { ip, log }: FastifyNormalRequest,
@@ -29,7 +38,10 @@ export function onMessage(
   message: string
 ): void {
   try {
+    // WOULD RAISE AN EXCEPTION: wrapped with a try block.
+    // The deserialized message in JSON.
     const deserialized = JSON.parse(message.toString());
+
     if (!IsMessageArchitectFromUser(deserialized)) {
       log.warn(`${as} sent a invalid message.`);
       console.warn(deserialized);
@@ -37,6 +49,8 @@ export function onMessage(
     }
 
     log.info(sendWhat(as, deserialized.type));
+
+    // Construct the response.
     const data = createResponseJson(
       as,
       ip,
@@ -44,6 +58,7 @@ export function onMessage(
       deserialized.data
     );
 
+    // Send the response to every connections.
     connections.forEach((c) => c.socket.send(data));
   } catch (e: unknown) {
     log.warn(
@@ -54,9 +69,15 @@ export function onMessage(
   }
 }
 
+/**
+ * The wrapper to be used on "message" event of WebSocket.
+ * @param request The request from wsHandler()
+ * @param params The parameter of the request from wsHandler()
+ * @returns The function that can be used directly in `.on("message")`
+ */
 export function onMessageWrapper(
   request: FastifyNormalRequest,
   params: IParam,
-): (arg0: string) => void {
+): (message: string) => void {
   return (message) => onMessage(request, params, message);
 }

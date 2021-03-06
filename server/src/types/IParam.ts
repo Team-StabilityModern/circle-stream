@@ -1,3 +1,7 @@
+/**
+ * The request parameter in URL, for example,
+ * `/:as`
+ */
 export interface IParam {
   as: string;
 }

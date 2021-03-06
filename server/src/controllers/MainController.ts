@@ -4,6 +4,10 @@ import { onMessageWrapper } from "../services/main/onMessage";
 import { IsIParam } from "../types/IParam";
 import { IController } from "./IController";
 
+/**
+ * Main controller: `/:as`
+ * @param fastify The fastify instance
+ */
 const MainController: IController = (fastify) => {
   fastify.get("/:as", { websocket: true }, function wsHandler(connection, req) {
     if (!IsIParam(req.params)) return;
