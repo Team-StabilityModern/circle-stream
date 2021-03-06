@@ -10,7 +10,7 @@ export default class Connections {
   /**
    * The data structure stored all the WebSocket connections.
    */
-  private readonly connections: SocketStream[] = [];
+  private connections: SocketStream[] = [];
   /**
    * The singleton instance.
    */
@@ -59,6 +59,6 @@ export default class Connections {
    */
   remove(connection: SocketStream): void {
     log.trace("called remove()");
-    this.connections.filter((v) => v !== connection);
+    this.connections = this.connections.filter((v) => v !== connection);
   }
 }
