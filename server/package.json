@@ -19,5 +19,9 @@
     "@types/ws": "^7.4.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.3"
+  },
+  "scripts": {
+    "run": "ts-node index",
+    "test": "jest"
   }
 }
