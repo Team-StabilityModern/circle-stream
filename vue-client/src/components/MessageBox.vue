@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="max-width: 50vw; margin: 0 auto">
+  <div class="container">
     <div class="container">
       <div class="message-box" ref="messageBox">
         <div v-for="m of messageReceived" :key="m.id">
@@ -24,8 +24,8 @@
       </div>
     </div>
     <div class="container">
-      <p>IP: {{ ip }}</p>
-      <p>As: {{ sender }}</p>
+      <p>IP: {{ ipAddress }}</p>
+      <p>As: {{ name }}</p>
       <p>Channel: {{ channel }}</p>
     </div>
     <div class="container">
@@ -66,15 +66,15 @@ interface Id {
 
 @Options({
   props: {
-    sender: String,
-    ip: String,
+    name: String,
+    ipAddress: String,
     channel: String,
   },
 })
 export default class MessageBox extends Vue {
   // Props
-  sender!: string;
-  ip!: string;
+  name!: string;
+  ipAddress!: string;
   channel!: string;
 
   messageBoxScrollTop: number = 0;
@@ -84,18 +84,23 @@ export default class MessageBox extends Vue {
   private sdk: ServerSdk | undefined;
   private id: number = 1;
 
+  scrollToTop() {
+    const messageBox = this.$refs.messageBox as HTMLDivElement;
+    messageBox.scrollTop = messageBox.scrollHeight;
+  }
+
+  scrollToTopWithDelay(ms: number = 500) {
+    setTimeout(this.scrollToTop, ms);
+  }
+
   sendMessage() {
     if (this.messageToSent.length > 0) {
-      const messageBox = this.$refs.messageBox as HTMLDivElement;
-
       this.sdk?.sendMessage(
         CreateMessageArchitect(MessageType.PLAIN, this.messageToSent)
       );
       this.messageToSent = "";
 
-      setTimeout(() => {
-        messageBox.scrollTop = messageBox.scrollHeight;
-      }, 500);
+      this.scrollToTopWithDelay();
     }
   }
 
@@ -104,7 +109,7 @@ export default class MessageBox extends Vue {
   }
 
   mounted() {
-    this.sdk = new ServerSdk(this.ip, this.channel, this.sender);
+    this.sdk = new ServerSdk(this.ipAddress, this.channel, this.name);
     this.sdk.onClosedListeners.push((closeCode) => {
       this.messageReceived.push({
         id: this.id++,
@@ -115,6 +120,7 @@ export default class MessageBox extends Vue {
     });
     this.sdk.onMessageListeners.push((resp) => {
       this.messageReceived.push({ ...resp, id: this.id++ });
+      this.scrollToTopWithDelay();
     });
   }
 }
@@ -129,7 +135,7 @@ export default class MessageBox extends Vue {
 .message-box {
   height: 10em;
   border-radius: 3px;
-  border: 2px solid black;
+  border: 1px solid black;
   margin: 20px 1px;
   padding: 3px 10px;
   overflow: scroll;
