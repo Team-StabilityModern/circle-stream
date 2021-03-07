@@ -5,16 +5,15 @@ import Connections from '../../Connections';
 import { createResponseJson } from "../../types/IResponse";
 import type { FastifyNormalRequest } from "../../types/misc";
 
-const connections = Connections.Instance;
-
 /**
  * The action to do when somebody left (connection closed).
  */
 export function left(
   connection: SocketStream,
   { log }: FastifyNormalRequest,
-  { as }: IParam,
+  { channel, as }: IParam,
 ): void {
+  const connections = Connections.getInstance(channel);
   log.info(`${as} left.`);
 
   // Construct the response.

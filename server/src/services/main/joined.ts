@@ -5,16 +5,15 @@ import Connections from '../../Connections';
 import { createResponseJson } from "../../types/IResponse";
 import type { FastifyNormalRequest } from "../../types/misc";
 
-const connections = Connections.Instance;
-
 /**
  * The action to do when somebody joined (connection opened).
  */
 export function joined(
   connection: SocketStream,
   { log }: FastifyNormalRequest,
-  { as }: IParam,
+  { channel, as }: IParam,
 ): void {
+  const connections = Connections.getInstance(channel);
   log.info(`${as} joined.`);
 
   // Construct the response.

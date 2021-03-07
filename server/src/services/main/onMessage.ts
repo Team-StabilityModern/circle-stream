@@ -8,11 +8,6 @@ import {
 import type { FastifyNormalRequest } from "../../types/misc";
 
 /**
- * The pool stored all the WebSocket connections.
- */
-const connections = Connections.Instance;
-
-/**
  * Return the suitable log based on the MessageType.
  * @param as The sender.
  * @param mt The message type.
@@ -34,9 +29,11 @@ const sendWhat = (as: string, mt: MessageType): string => {
  */
 export function onMessage(
   { log }: FastifyNormalRequest,
-  { as }: IParam,
+  { channel, as }: IParam,
   message: string
 ): void {
+  const connections = Connections.getInstance(channel);
+
   try {
     // WOULD RAISE AN EXCEPTION: wrapped with a try block.
     // The deserialized message in JSON.
