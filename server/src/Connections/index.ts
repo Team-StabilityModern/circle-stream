@@ -14,10 +14,10 @@ export default class Connections {
   /**
    * The singleton instance.
    */
-  private static instance: Connections;
+  private static instances: Record<string, Connections> = {};
 
   private constructor() {
-    log.trace("called constructor()")
+    log.trace("called constructor()");
   }
 
   static set logLevel(level: string) {
@@ -27,15 +27,16 @@ export default class Connections {
   /**
    * Get the singleton instance.
    */
-  static get Instance() {
-    log.trace("getting Instance")
-    if (!this.instance) {
-      log.debug("Instance was not created before, creating one.")
-      this.instance = new Connections();
+  static getInstance(id: string) {
+    log.trace(`getting Instance ${id}`);
+
+    if (!this.instances[id]) {
+      log.debug("Instance was not created before, creating one.");
+      this.instances[id] = new Connections();
     } else {
-      log.debug("Instance was created before, reusing one.")
+      log.debug("Instance was created before, reusing one.");
     }
-    return this.instance;
+    return this.instances[id];
   }
 
   /**
@@ -49,7 +50,13 @@ export default class Connections {
   /**
    * Run the callbackfn for every connections in this pool.
    */
-  forEach(callbackfn: (value: SocketStream, index: number, array: SocketStream[]) => void): void {
+  forEach(
+    callbackfn: (
+      value: SocketStream,
+      index: number,
+      array: SocketStream[]
+    ) => void
+  ): void {
     log.trace("called forEach()");
     this.connections.forEach(callbackfn);
   }

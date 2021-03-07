@@ -25,18 +25,25 @@ let connection: JestSocketStream = ({
   jestRemoveTestPassed: true,
 }) as unknown as JestSocketStream;
 
-describe("The instance should be singleton", () => {
-  it("Try to run .Instance the first time", () => {
-    instance = Connections.Instance;
+describe("The instance should be singleton when the ID is the same", () => {
+  it("Try to run .getInstance the first time", () => {
+    instance = Connections.getInstance("a");
   });
 
   it("Try to inject something to the instance", () => {
     instance.__singleton_test_flag = "hi";
   });
 
-  it("Try to run .Instance the second time, the __singleton_test_flag should be not undefined", () => {
-    const instance2: JestConnections = Connections.Instance;
+  it("Try to run .getInstance the second time, the __singleton_test_flag should be not undefined", () => {
+    const instance2: JestConnections = Connections.getInstance("a");
     expect(instance2.__singleton_test_flag).toBe("hi");
+  });
+});
+
+describe("The instance should be another one when the ID is not the same", () => {
+  it("Try to run .getInstance the third time with another ID, the __singleton_test_flag should be undefined", () => {
+    const instance2: JestConnections = Connections.getInstance("b");
+    expect(instance2.__singleton_test_flag).toBeUndefined();
   });
 });
 
