@@ -26,6 +26,7 @@
     <div class="container">
       <p>IP: {{ ip }}</p>
       <p>As: {{ sender }}</p>
+      <p>Channel: {{ channel }}</p>
     </div>
     <div class="container">
       <div class="field">
@@ -66,16 +67,21 @@ interface Id {
   props: {
     sender: String,
     ip: String,
+    channel: String,
   },
 })
 export default class MessageBox extends Vue {
+  // Props
+  sender!: string;
+  ip!: string;
+  channel!: string;
+
   messageBoxScrollTop: number = 0;
   messageReceived: (IResponse & Id)[] = [];
   messageToSent: string = "";
-  sdk: ServerSdk | undefined;
-  sender!: string;
-  ip!: string;
-  id: number = 1;
+
+  private sdk: ServerSdk | undefined;
+  private id: number = 1;
 
   sendMessage() {
     if (this.messageToSent.length > 0) {
@@ -125,7 +131,6 @@ export default class MessageBox extends Vue {
 }
 
 .container {
-  max-width: 70vw;
   padding-bottom: 10px;
 }
 </style>
