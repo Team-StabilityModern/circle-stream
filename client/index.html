@@ -43,12 +43,12 @@
 
         ws.addEventListener("message", (m) => {
             const messageDOM = document.createElement("p");
-            const { ip, as, type, data }= JSON.parse(m.data.toString());
+            const { as, type, data }= JSON.parse(m.data.toString());
 
-            if (type === 'user_join') messageDOM.innerText = `${as} (${ip}): joined`;
-            else if (type === 'user_left') messageDOM.innerText = `${as} (${ip}): left`;
-            else if (type === 'plain') messageDOM.innerText = `${as} (${ip}): ${data}`;
-            else messageDOM.innerText = `${as} (${ip}): unknown...`;
+            if (type === 'user_join') messageDOM.innerText = `${as}: joined`;
+            else if (type === 'user_left') messageDOM.innerText = `${as}: left`;
+            else if (type === 'plain') messageDOM.innerText = `${as}: ${data}`;
+            else messageDOM.innerText = `${as}: unknown...`;
 
             messageBox.appendChild(messageDOM);
         });
