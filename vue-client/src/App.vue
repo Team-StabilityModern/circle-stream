@@ -1,17 +1,22 @@
 <template>
   <section class="section">
-    <HelloWorld :sender="this.sender" ip="127.0.0.1" />
+    <div class="field">
+      <div class="control">
+        <input type="text" class="input" v-model="channelName" />
+      </div>
+    </div>
+    <MessageBox :sender="this.sender" ip="127.0.0.1" :channel="channelName" />
   </section>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import HelloWorld from "./components/MessageBox.vue";
+import MessageBox from "./components/MessageBox.vue";
 import "bulma";
 
 @Options({
   components: {
-    HelloWorld,
+    MessageBox,
   },
 })
 export default class App extends Vue {
