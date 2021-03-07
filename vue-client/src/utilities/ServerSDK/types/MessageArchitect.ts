@@ -18,6 +18,10 @@ export enum MessageType {
    * Can be only used when processing the response.
    */
   USER_LEFT = "user_left",
+  /**
+   * Using when remote has closed the connection.
+   */
+  CONNECTION_CLOSED = "connection_closed",
 }
 
 export type MessageTypeForClient = MessageType.BINARY | MessageType.PLAIN;

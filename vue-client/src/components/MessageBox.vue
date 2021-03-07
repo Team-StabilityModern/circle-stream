@@ -1,8 +1,26 @@
 <template>
   <div class="container" style="max-width: 50vw; margin: 0 auto">
     <div class="container">
-      <div class="message-box" style="white-space: pre-line" ref="messageBox">
-        {{ messageReceived }}
+      <div class="message-box" ref="messageBox">
+        <div v-for="m of messageReceived" :key="m.id">
+          <p v-if="m.type === 'plain'">
+            <b>{{ m.as }}</b
+            >: {{ m.data }}
+          </p>
+          <p v-else-if="m.type === 'user_join'">
+            <i
+              ><b>{{ m.as }}</b> 加入了。</i
+            >
+          </p>
+          <p v-else-if="m.type === 'user_left'">
+            <i
+              ><b>{{ m.as }}</b> 離開了。</i
+            >
+          </p>
+          <p v-else-if="m.type === 'connection_closed'">
+            <i>連線中斷。代碼：{{ m.data }}</i>
+          </p>
+        </div>
       </div>
     </div>
     <div class="container">
@@ -32,11 +50,17 @@
 
 <script lang="ts">
 import ServerSdk from "@/utilities/ServerSDK";
+// eslint-disable-next-line no-unused-vars
+import type { IResponse } from "@/utilities/ServerSDK/types/IResponse";
 import {
   CreateMessageArchitect,
   MessageType,
 } from "@/utilities/ServerSDK/types/MessageArchitect";
 import { Options, Vue } from "vue-class-component";
+
+interface Id {
+  id: number;
+}
 
 @Options({
   props: {
@@ -46,11 +70,12 @@ import { Options, Vue } from "vue-class-component";
 })
 export default class MessageBox extends Vue {
   messageBoxScrollTop: number = 0;
-  messageReceived: string = "";
+  messageReceived: (IResponse & Id)[] = [];
   messageToSent: string = "";
   sdk: ServerSdk | undefined;
   sender!: string;
   ip!: string;
+  id: number = 1;
 
   sendMessage() {
     if (this.messageToSent.length > 0) {
@@ -70,28 +95,15 @@ export default class MessageBox extends Vue {
   mounted() {
     this.sdk = new ServerSdk(this.ip, this.sender);
     this.sdk.onClosedListeners.push((closeCode) => {
-      this.messageReceived += `對端已關閉，關閉碼：${closeCode}。\n`;
+      this.messageReceived.push({
+        id: this.id++,
+        as: "Server",
+        type: MessageType.CONNECTION_CLOSED,
+        data: closeCode.toString(),
+      });
     });
-    this.sdk.onMessageListeners.push(({ as, type, data }) => {
-      const prefix = `${as}:`;
-      const output = (message: string) => {
-        this.messageReceived += message + "\n";
-      };
-
-      switch (type) {
-        case MessageType.PLAIN:
-          output(`${prefix} ${data}`);
-          break;
-        case MessageType.BINARY:
-          output(`${prefix} 傳送了二進位資料。`);
-          break;
-        case MessageType.USER_JOIN:
-          output(`>> ${prefix} 進來了！`);
-          break;
-        case MessageType.USER_LEFT:
-          output(`>> ${prefix} 離開了。`);
-          break;
-      }
+    this.sdk.onMessageListeners.push((resp) => {
+      this.messageReceived.push({ ...resp, id: this.id++ });
     });
   }
 }
