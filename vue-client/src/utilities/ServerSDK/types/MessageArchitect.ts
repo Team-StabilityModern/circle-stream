@@ -17,7 +17,7 @@ export enum MessageType {
    * Using when an user left.
    * Can be only used when processing the response.
    */
-  USER_LEFT = "user_left"
+  USER_LEFT = "user_left",
 }
 
 export type MessageTypeForClient = MessageType.BINARY | MessageType.PLAIN;

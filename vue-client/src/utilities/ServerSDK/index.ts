@@ -28,8 +28,8 @@ export default class ServerSdk {
   constructor(private ip: string, private user: string) {
     debug("constructor() was called");
     this.websocket = new WebSocket(`ws://${ip}:3000/${user}`);
-    this.websocket.addEventListener('close', this.onClose.bind(this));
-    this.websocket.addEventListener('message', this.onMessage.bind(this));
+    this.websocket.addEventListener("close", this.onClose.bind(this));
+    this.websocket.addEventListener("message", this.onMessage.bind(this));
   }
 
   get IP(): string {
@@ -54,11 +54,11 @@ export default class ServerSdk {
 
   sendMessage(message: MessageArchitect): void {
     debug("sendMessage() was called");
-    
+
     if (this.Closed) {
-      debug("remote has been closed; ignoring request.")
+      debug("remote has been closed; ignoring request.");
     } else {
-      debug("remote is working; send request.")
+      debug("remote is working; send request.");
       this.websocket.send(JSON.stringify(message));
     }
   }
@@ -69,7 +69,7 @@ export default class ServerSdk {
     this.closeCode = c.code;
 
     debug("starting calling all onClosedListeners");
-    this.onClosedListeners.forEach(listener => listener(c.code));
+    this.onClosedListeners.forEach((listener) => listener(c.code));
   }
 
   private onMessage(m: MessageEvent) {
@@ -82,7 +82,7 @@ export default class ServerSdk {
       if (IsIResponse(message)) {
         debug("recevied a valid IResponse");
         debug("starting calling all onMessageListeners");
-        this.onMessageListeners.forEach(listener => listener(message));
+        this.onMessageListeners.forEach((listener) => listener(message));
       } else {
         warn(`Received an invalid object`);
         console.warn(message);

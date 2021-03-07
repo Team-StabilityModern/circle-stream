@@ -3,7 +3,7 @@
 import {
   IsMessageArchitect,
   MessageArchitect,
-  MessageType
+  MessageType,
 } from "./MessageArchitect";
 
 /**

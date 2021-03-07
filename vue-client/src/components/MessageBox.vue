@@ -1,7 +1,7 @@
 <template>
-  <div class="container" style="max-width: 50vw; margin: 0 auto;">
+  <div class="container" style="max-width: 50vw; margin: 0 auto">
     <div class="container">
-      <div class="message-box" style="white-space: pre-line;" ref="messageBox">
+      <div class="message-box" style="white-space: pre-line" ref="messageBox">
         {{ messageReceived }}
       </div>
     </div>
@@ -34,15 +34,15 @@
 import ServerSdk from "@/utilities/ServerSDK";
 import {
   CreateMessageArchitect,
-  MessageType
+  MessageType,
 } from "@/utilities/ServerSDK/types/MessageArchitect";
 import { Options, Vue } from "vue-class-component";
 
 @Options({
   props: {
     sender: String,
-    ip: String
-  }
+    ip: String,
+  },
 })
 export default class MessageBox extends Vue {
   messageBoxScrollTop: number = 0;
@@ -69,7 +69,7 @@ export default class MessageBox extends Vue {
 
   mounted() {
     this.sdk = new ServerSdk(this.ip, this.sender);
-    this.sdk.onClosedListeners.push(closeCode => {
+    this.sdk.onClosedListeners.push((closeCode) => {
       this.messageReceived += `對端已關閉，關閉碼：${closeCode}。\n`;
     });
     this.sdk.onMessageListeners.push(({ as, ip, type, data }) => {
