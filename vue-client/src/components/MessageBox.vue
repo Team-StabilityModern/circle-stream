@@ -18,7 +18,7 @@
             >
           </p>
           <p v-else-if="m.type === 'connection_closed'">
-            <i>連線中斷。代碼：{{ m.data }}</i>
+            <i>連線中斷。代碼：{{ getHumanReadableCloseCode(m.data) }}</i>
           </p>
         </div>
       </div>
@@ -58,6 +58,7 @@ import {
   MessageType,
 } from "@/utilities/ServerSDK/types/MessageArchitect";
 import { Options, Vue } from "vue-class-component";
+import { getHumanReadableCloseCode } from "@/utilities/ServerSDK/types/CustomCloseCode";
 
 interface Id {
   id: number;
@@ -96,6 +97,10 @@ export default class MessageBox extends Vue {
         messageBox.scrollTop = messageBox.scrollHeight;
       }, 500);
     }
+  }
+
+  getHumanReadableCloseCode(code: number): string {
+    return getHumanReadableCloseCode(code);
   }
 
   mounted() {
