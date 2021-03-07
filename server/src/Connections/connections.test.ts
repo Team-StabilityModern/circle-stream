@@ -1,29 +1,35 @@
-import { SocketStream } from 'fastify-websocket';
-import Connections from './index';
+import { SocketStream } from "fastify-websocket";
+import Connections from "./index";
 
 interface Singleton {
-  __singleton_test_flag: "hi"
+  __singleton_test_flag: "hi";
 }
 
 interface TestFlag {
   jestPushTestPassed: boolean;
   jestForeachTestPassed: boolean;
-  jestRemoveTestPassed: boolean;
+  jestRemoveTest: boolean | null;
 }
 
 interface ConnectionPrivateMethods {
-  connections: JestSocketStream[];
+  connections: Record<string, JestSocketStream>;
 }
 
 type JestConnections = Connections & Partial<Singleton>;
-type JestSocketStream = SocketStream & Partial<TestFlag>; 
+type JestSocketStream = SocketStream & Partial<TestFlag>;
 
 let instance: JestConnections;
 let connection: JestSocketStream = ({
   jestPushTestPassed: false,
   jestForeachTestPassed: false,
-  jestRemoveTestPassed: true,
-}) as unknown as JestSocketStream;
+  jestRemoveTest: null,
+} as unknown) as JestSocketStream;
+let connection2 = Object.assign(
+  {
+    __jest_another_connection_test_flag: true,
+  },
+  connection
+);
 
 describe("The instance should be singleton when the ID is the same", () => {
   it("Try to run .getInstance the first time", () => {
@@ -49,15 +55,47 @@ describe("The instance should be another one when the ID is not the same", () =>
 
 describe("push() do push a connection", () => {
   it("Try to push a mock connection", () => {
-    instance.push(connection);
+    instance.push("test", connection);
   });
 
-  it("Does the connection existed?", () => {
-    (instance as unknown as ConnectionPrivateMethods).connections.forEach(element => {
-      element.jestPushTestPassed = true;
-    });
+  it("Try to push another mock connection", () => {
+    instance.push("test2", connection2);
+  });
+
+  it("Does both the connection existed?", () => {
+    const connections = ((instance as unknown) as ConnectionPrivateMethods)
+      .connections;
+
+    connections["test"].jestPushTestPassed = true;
+    connections["test2"].jestPushTestPassed = true;
 
     expect(connection.jestPushTestPassed).toBe(true);
+    expect(connection2.jestPushTestPassed).toBe(true);
+  });
+});
+
+describe("get() do get a connection", () => {
+  it("Try to get the mock connection", () => {
+    expect(instance.get("test")).toBe(connection);
+  });
+
+  it("Try to get the mock connection 2", () => {
+    const gottenConnection = instance.get("test2");
+    expect(gottenConnection).toBe(connection2);
+    expect(
+      (gottenConnection as typeof connection2)
+        .__jest_another_connection_test_flag
+    ).toBe(true);
+  });
+
+  it("Try to get the connection that never existed", () => {
+    expect(instance.get("test!!!")).toBe(null);
+  });
+});
+
+describe("listAllId() do list ID of all the online connections", () => {
+  it("listAllId should returns 'test' and 'test2' which is what we added in push()", () => {
+    expect(instance.listAllId()).toStrictEqual(["test", "test2"]);
   });
 });
 
@@ -70,21 +108,29 @@ describe("forEach() do something in every connections in the pool", () => {
 
   it("Expect the connection.jestForeachTestPassed === true.", () => {
     expect(connection.jestForeachTestPassed).toBe(true);
-  })
+  });
+
+  it("Expect the connection2.jestForeachTestPassed === true.", () => {
+    expect(connection2.jestForeachTestPassed).toBe(true);
+  });
 });
 
 describe("remove() do something in every connections in the pool", () => {
   it("Remove the connection from instance", () => {
-    instance.remove(connection);
+    instance.remove("test");
   });
 
-  it("Mark the jestForeachTestPassed of every remaining elements in the pool as false.", () => {
+  it("Mark the jestRemoveTest of every remaining elements in the pool as true.", () => {
     instance.forEach((element: JestSocketStream) => {
-      element.jestRemoveTestPassed = false;
+      element.jestRemoveTest = true;
     });
   });
 
-  it("Expect the connection.jestRemoveTestPassed === true.", () => {
-    expect(connection.jestRemoveTestPassed).toBe(true);
-  })
+  it("Expect the connection.jestRemoveTest === null.", () => {
+    expect(connection.jestRemoveTest).toBe(null);
+  });
+
+  it("Expect the connection2.jestRemoveTest === true.", () => {
+    expect(connection2.jestRemoveTest).toBe(true);
+  });
 });

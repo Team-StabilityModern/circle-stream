@@ -10,7 +10,7 @@ export default class Connections {
   /**
    * The data structure stored all the WebSocket connections.
    */
-  private connections: SocketStream[] = [];
+  private connections: Record<string, SocketStream> = {};
   /**
    * The singleton instance.
    */
@@ -41,10 +41,37 @@ export default class Connections {
 
   /**
    * Push the connection to this pool.
+   * 
+   * @returns Are there are any duplicated items?
    */
-  push(connection: SocketStream): void {
+  push(id: string, connection: SocketStream): boolean {
     log.trace("called push()");
-    this.connections.push(connection);
+    
+    if (this.get(id)) {
+      log.debug(`there are already a ${id} in connections.`);
+      return false;
+    }
+
+    log.debug(`there are no ${id} in connections. pushing one.`)
+    this.connections[id] = connection;
+    return true;
+  }
+
+  /**
+   * Get the specified connection.
+   * @param id the Connection id
+   * @returns If there are none, return null.
+   */
+  get(id: string): SocketStream | null {
+    log.trace("called get()");
+    return this.connections[id] || null;
+  }
+
+  /**
+   * List all online ID.
+   */
+  listAllId(): string[] {
+    return Object.keys(this.connections);
   }
 
   /**
@@ -53,19 +80,19 @@ export default class Connections {
   forEach(
     callbackfn: (
       value: SocketStream,
-      index: number,
-      array: SocketStream[]
+      id: String
     ) => void
   ): void {
     log.trace("called forEach()");
-    this.connections.forEach(callbackfn);
+
+    this.listAllId().forEach((key) => callbackfn(this.connections[key], key));
   }
 
   /**
    * Remove the given connection from this pool.
    */
-  remove(connection: SocketStream): void {
+  remove(id: string): void {
     log.trace("called remove()");
-    this.connections = this.connections.filter((v) => v !== connection);
+    delete this.connections[id];
   }
 }
