@@ -4,6 +4,7 @@ import { MessageType } from "../../types/MessageArchitect";
 import Connections from '../../Connections';
 import { createResponseJson } from "../../types/IResponse";
 import type { FastifyNormalRequest } from "../../types/misc";
+import { CustomCloseCode } from "../../types/CustomCloseCode";
 
 /**
  * The action to do when somebody joined (connection opened).
@@ -14,12 +15,15 @@ export function joined(
   { channel, as }: IParam,
 ): void {
   const connections = Connections.getInstance(channel);
-  log.info(`${as} joined.`);
-
-  // Construct the response.
-  const joinMessage = createResponseJson(as, MessageType.USER_JOIN, "");
   // Push this connection to the connection pool.
-  connections.push(connection);
-  // Send the joinMessage to every connections.
-  connections.forEach((c) => c.socket.send(joinMessage));
+  if (connections.push(as, connection)) {
+    log.info(`${as} joined.`);
+    // Construct the response.
+    const joinMessage = createResponseJson(as, MessageType.USER_JOIN, "");
+    // Send the joinMessage to every connections.
+    connections.forEach((c) => c.socket.send(joinMessage));
+  } else {
+    log.info(`there are already a ${as} joined. ending this session.`);
+    connection.socket.close(CustomCloseCode.UserDuplicated);
+  }
 }

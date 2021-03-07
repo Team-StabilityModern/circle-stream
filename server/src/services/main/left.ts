@@ -18,8 +18,8 @@ export function left(
 
   // Construct the response.
   const message = createResponseJson(as, MessageType.USER_LEFT, "");
-  // Push this connection to the connection pool.
-  connections.remove(connection);
+  // Remove this connection from the connection pool.
+  connections.remove(as);
   // Send the message to every connections.
   connections.forEach((c) => c.socket.send(message));
 }
