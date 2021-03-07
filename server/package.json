@@ -21,7 +21,7 @@
     "ts-jest": "^26.5.3"
   },
   "scripts": {
-    "run": "ts-node index",
+    "start": "ts-node index",
     "test": "jest"
   }
 }

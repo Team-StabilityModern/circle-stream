@@ -9,7 +9,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "bulma": "^0.9.2",
     "core-js": "^3.6.5",
+    "sass": "^1.32.8",
+    "sass-loader": "<11",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0"
   },
