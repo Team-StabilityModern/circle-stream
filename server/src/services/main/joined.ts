@@ -12,13 +12,13 @@ const connections = Connections.Instance;
  */
 export function joined(
   connection: SocketStream,
-  { ip, log }: FastifyNormalRequest,
+  { log }: FastifyNormalRequest,
   { as }: IParam,
 ): void {
-  log.info(`${as} (${ip}) joined.`);
+  log.info(`${as} joined.`);
 
   // Construct the response.
-  const joinMessage = createResponseJson(as, ip, MessageType.USER_JOIN, "");
+  const joinMessage = createResponseJson(as, MessageType.USER_JOIN, "");
   // Push this connection to the connection pool.
   connections.push(connection);
   // Send the joinMessage to every connections.

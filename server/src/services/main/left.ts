@@ -12,13 +12,13 @@ const connections = Connections.Instance;
  */
 export function left(
   connection: SocketStream,
-  { ip, log }: FastifyNormalRequest,
+  { log }: FastifyNormalRequest,
   { as }: IParam,
 ): void {
   log.info(`${as} left.`);
 
   // Construct the response.
-  const message = createResponseJson(as, ip, MessageType.USER_LEFT, "");
+  const message = createResponseJson(as, MessageType.USER_LEFT, "");
   // Push this connection to the connection pool.
   connections.remove(connection);
   // Send the message to every connections.
