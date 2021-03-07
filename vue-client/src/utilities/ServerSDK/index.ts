@@ -25,9 +25,13 @@ export default class ServerSdk {
    */
   readonly onClosedListeners: onClosedListener[] = [];
 
-  constructor(private ip: string, private user: string) {
+  constructor(
+    private ip: string,
+    private channel: string,
+    private user: string
+  ) {
     debug("constructor() was called");
-    this.websocket = new WebSocket(`ws://${ip}:3000/${user}`);
+    this.websocket = new WebSocket(`ws://${ip}:3000/${channel}/${user}`);
     this.websocket.addEventListener("close", this.onClose.bind(this));
     this.websocket.addEventListener("message", this.onMessage.bind(this));
   }
@@ -35,6 +39,11 @@ export default class ServerSdk {
   get IP(): string {
     debug("getting IP");
     return this.ip;
+  }
+
+  get Channel(): string {
+    debug("getting Channel");
+    return this.channel;
   }
 
   get User(): string {

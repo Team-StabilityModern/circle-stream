@@ -99,7 +99,7 @@ export default class MessageBox extends Vue {
   }
 
   mounted() {
-    this.sdk = new ServerSdk(this.ip, this.sender);
+    this.sdk = new ServerSdk(this.ip, this.channel, this.sender);
     this.sdk.onClosedListeners.push((closeCode) => {
       this.messageReceived.push({
         id: this.id++,
