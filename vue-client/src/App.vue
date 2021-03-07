@@ -24,12 +24,14 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import MessageBox from "./components/MessageBox.vue";
 import "bulma";
+import { defineAsyncComponent } from "vue";
 
 @Options({
   components: {
-    MessageBox,
+    MessageBox: defineAsyncComponent(
+      () => import("./components/MessageBox.vue")
+    ),
   },
 })
 export default class App extends Vue {
