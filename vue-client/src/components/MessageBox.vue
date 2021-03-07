@@ -72,8 +72,8 @@ export default class MessageBox extends Vue {
     this.sdk.onClosedListeners.push((closeCode) => {
       this.messageReceived += `對端已關閉，關閉碼：${closeCode}。\n`;
     });
-    this.sdk.onMessageListeners.push(({ as, ip, type, data }) => {
-      const prefix = `${as} (${ip}):`;
+    this.sdk.onMessageListeners.push(({ as, type, data }) => {
+      const prefix = `${as}:`;
       const output = (message: string) => {
         this.messageReceived += message + "\n";
       };
