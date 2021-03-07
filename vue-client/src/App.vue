@@ -1,23 +1,41 @@
 <template>
   <section class="section" style="max-width: 50vw; margin: 0 auto">
-    <div class="field" v-if="channelName === null">
-      <div class="label">頻道名稱</div>
-      <div class="field is-grouped">
-        <div class="control">
-          <input type="text" class="input" v-model="newChannelName" />
+    <div class="options" v-if="!changeSaved">
+      <div class="field">
+        <div class="label">IP 地址</div>
+        <div class="field">
+          <div class="control">
+            <input type="text" class="input" v-model="newIPAddress" />
+          </div>
         </div>
+      </div>
+      <div class="field">
+        <div class="label">頻道名稱</div>
+        <div class="field">
+          <div class="control">
+            <input type="text" class="input" v-model="newChannelName" />
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="label">暱稱</div>
+        <div class="field">
+          <div class="control">
+            <input type="text" class="input" v-model="newName" />
+          </div>
+        </div>
+      </div>
+      <div class="field">
         <div class="control">
-          <button class="button is-primary" @click="applyChannelName()">
-            選擇
-          </button>
+          <button class="button is-primary" @click="saveOptions()">選擇</button>
         </div>
       </div>
     </div>
     <MessageBox
-      v-if="channelName !== null"
-      :sender="this.sender"
-      ip="127.0.0.1"
+      v-if="changeSaved"
+      :sender="name"
       :channel="channelName"
+      :ip="ipAddress"
     />
   </section>
 </template>
@@ -35,13 +53,28 @@ import { defineAsyncComponent } from "vue";
   },
 })
 export default class App extends Vue {
-  sender: string = `Client${Math.round(Math.random() * 1000)}`;
   newChannelName: string = "default";
   channelName: string | null = null;
+  newName: string = `Client${Math.round(Math.random() * 1000)}`;
+  name: string | null = null;
+  newIPAddress: string = "127.0.0.1";
+  ipAddress: string | null = null;
 
-  applyChannelName() {
-    const prompt = confirm(`是否連線到 ${this.newChannelName} 頻道？`);
-    if (prompt) this.channelName = this.newChannelName;
+  get changeSaved() {
+    return (
+      this.channelName !== null && this.name !== null && this.ipAddress !== null
+    );
+  }
+
+  saveOptions() {
+    const prompt = confirm(
+      `是否用 ${this.newName} 連線到位於 ${this.newIPAddress} 的 ${this.newChannelName} 頻道？`
+    );
+    if (prompt) {
+      this.channelName = this.newChannelName;
+      this.name = this.newName;
+      this.ipAddress = this.newIPAddress;
+    }
   }
 }
 </script>
