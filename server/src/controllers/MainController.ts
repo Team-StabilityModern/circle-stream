@@ -5,11 +5,11 @@ import { IsIParam } from "../types/IParam";
 import { IController } from "./IController";
 
 /**
- * Main controller: `/:as`
+ * Main controller: `/:channel/:as`
  * @param fastify The fastify instance
  */
 const MainController: IController = (fastify) => {
-  fastify.get("/:as", { websocket: true }, function wsHandler(connection, req) {
+  fastify.get("/:channel/:as", { websocket: true }, function wsHandler(connection, req) {
     if (!IsIParam(req.params)) return;
     
     joined(connection, req, req.params);
