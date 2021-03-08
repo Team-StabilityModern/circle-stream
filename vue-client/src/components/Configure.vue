@@ -1,5 +1,5 @@
 <template>
-  <div class="container options" v-if="!changeSaved">
+  <div class="container options">
     <div class="field">
       <div class="label">IP 地址</div>
       <div class="field">
