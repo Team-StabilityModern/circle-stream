@@ -4,10 +4,27 @@ export enum MessageType {
    */
   PLAIN = "plain",
   /**
-   * Binary data. When using it, the data should be
-   * encoded with Base64.
+   * A picture
    */
-  BINARY = "binary",
+  PICTURE = "picture",
+  /**
+   * A video
+   */
+  VIDEO = "video",
+  /**
+   * An audio stream
+   */
+  AUDIO_STREAM = "audio_stream",
+  /**
+   * A video stream
+   */
+  VIDEO_STREAM = "video_stream",
+  /**
+   * A data with the custom content type.
+   * 
+   * You have to specify `contentType` explicitly.
+   */
+  CUSTOM = "custom",
   /**
    * Using when an user joined.
    */
@@ -26,6 +43,11 @@ export interface MessageArchitect {
    * The type of the message.
    */
   type: MessageType;
+  /**
+   * When the type is `custom`, it will need to
+   * define it explicitly.
+   */
+  contentType?: string;
   /**
    * The data.
    * 
@@ -56,10 +78,14 @@ export function IsMessageArchitectFromUser(val: unknown): val is MessageArchitec
   return (
     // val is an instance of MessageArchitect
     IsMessageArchitect(val)
-    // and its v.type should be either PLAIN or BINARY.
+    // and its v.type should be either PLAIN, PICTURE, VIDEO, STREAMS and custom data.
     && (
       v.type === MessageType.PLAIN
-      || v.type == MessageType.BINARY
+      || v.type === MessageType.PICTURE
+      || v.type === MessageType.VIDEO
+      || v.type === MessageType.AUDIO_STREAM
+      || v.type === MessageType.VIDEO_STREAM
+      || v.type === MessageType.CUSTOM
     )
   );
 }
