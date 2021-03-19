@@ -15,10 +15,12 @@ import type { FastifyNormalRequest } from "../../types/misc";
  */
 const sendWhat = (as: string, mt: MessageType): string => {
   switch (mt) {
-    case MessageType.BINARY:
-      return `${as} sent a binary.`;
     case MessageType.PLAIN:
       return `${as} sent a plain text.`;
+    case MessageType.AUDIO_STREAM:
+      return `${as} start streaming audio.`;
+    case MessageType.VIDEO_STREAM:
+      return `${as} start streaming video.`;
     default:
       return `${as} sent a ${mt}`;
   }
