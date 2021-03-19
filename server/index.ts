@@ -28,4 +28,3 @@ fastify.listen(options.port, options.ip, (err) => {
     process.exit(1);
   }
 });
-
