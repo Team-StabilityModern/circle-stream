@@ -4,19 +4,27 @@ export enum MessageType {
    */
   PLAIN = "plain",
   /**
-   * A picture
+   * A picture.
+   * 
+   * You have to specify `contentType` explicitly.
    */
   PICTURE = "picture",
   /**
-   * A video
+   * A picture.
+   * 
+   * You have to specify `contentType` explicitly.
    */
   VIDEO = "video",
   /**
-   * An audio stream
+   * A picture.
+   * 
+   * You have to specify `contentType` explicitly.
    */
   AUDIO_STREAM = "audio_stream",
   /**
-   * A video stream
+   * A picture.
+   * 
+   * You have to specify `contentType` explicitly.
    */
   VIDEO_STREAM = "video_stream",
   /**
@@ -74,6 +82,15 @@ export function IsMessageArchitect(val: unknown): val is MessageArchitect {
 
 export function IsMessageArchitectFromUser(val: unknown): val is MessageArchitect {
   const v = val as MessageArchitect;
+  const hasContentType = (type: MessageType, contentType: string | undefined): boolean => {
+    if (!(v.type === MessageType.PICTURE
+      || v.type === MessageType.VIDEO
+      || v.type === MessageType.AUDIO_STREAM
+      || v.type === MessageType.VIDEO_STREAM
+      || v.type === MessageType.CUSTOM)) return true;
+
+    return !!contentType;
+  }
 
   return (
     // val is an instance of MessageArchitect
@@ -87,5 +104,6 @@ export function IsMessageArchitectFromUser(val: unknown): val is MessageArchitec
       || v.type === MessageType.VIDEO_STREAM
       || v.type === MessageType.CUSTOM
     )
+    && hasContentType(v.type, v.contentType)
   );
 }
