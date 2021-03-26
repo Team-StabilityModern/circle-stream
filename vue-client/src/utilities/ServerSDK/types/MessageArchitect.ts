@@ -4,27 +4,52 @@ export enum MessageType {
    */
   PLAIN = "plain",
   /**
-   * Binary data. When using it, the data should be
-   * encoded with Base64.
+   * A picture.
+   *
+   * You have to specify `contentType` explicitly.
    */
-  BINARY = "binary",
+  PICTURE = "picture",
+  /**
+   * A picture.
+   *
+   * You have to specify `contentType` explicitly.
+   */
+  VIDEO = "video",
+  /**
+   * A picture.
+   *
+   * You have to specify `contentType` explicitly.
+   */
+  AUDIO_STREAM = "audio_stream",
+  /**
+   * A picture.
+   *
+   * You have to specify `contentType` explicitly.
+   */
+  VIDEO_STREAM = "video_stream",
+  /**
+   * A data with the custom content type.
+   *
+   * You have to specify `contentType` explicitly.
+   */
+  CUSTOM = "custom",
   /**
    * Using when an user joined.
-   * Can be only used when processing the response.
    */
   USER_JOIN = "user_join",
   /**
    * Using when an user left.
-   * Can be only used when processing the response.
    */
   USER_LEFT = "user_left",
-  /**
-   * Using when remote has closed the connection.
-   */
-  CONNECTION_CLOSED = "connection_closed",
 }
 
-export type MessageTypeForClient = MessageType.BINARY | MessageType.PLAIN;
+export type MessageTypeForClient =
+  | MessageType.PLAIN
+  | MessageType.PICTURE
+  | MessageType.VIDEO
+  | MessageType.AUDIO_STREAM
+  | MessageType.VIDEO_STREAM
+  | MessageType.CUSTOM;
 
 /**
  * A message architect. It is also the request from client.
@@ -34,6 +59,11 @@ export interface MessageArchitect {
    * The type of the message.
    */
   type: MessageType;
+  /**
+   * When the type is `custom`, it will need to
+   * define it explicitly.
+   */
+  contentType?: string;
   /**
    * The data.
    *
@@ -60,7 +90,8 @@ export function IsMessageArchitect(val: unknown): val is MessageArchitect {
 
 export function CreateMessageArchitect(
   type: MessageTypeForClient,
-  data: string
+  data: string,
+  contentType?: string
 ): MessageArchitect {
-  return { type, data };
+  return { type, data, contentType };
 }
