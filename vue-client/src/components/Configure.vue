@@ -26,7 +26,9 @@
     </div>
     <div class="field">
       <div class="control">
-        <button class="button is-primary" @click="saveOptions()">選擇</button>
+        <button class="button is-primary" @click="saveOptions()">
+          儲存並連線
+        </button>
       </div>
     </div>
   </div>
