@@ -7,6 +7,14 @@
             <b>{{ m.as }}</b
             >: {{ m.data }}
           </p>
+          <p v-else-if="m.type === 'picture'">
+            <b>{{ m.as }}</b
+            ><br />
+            <img
+              :src="`data:image/png;base64,${m.data}`"
+              :alt="`Picture from ${m.as}`"
+            />
+          </p>
           <p v-else-if="m.type === 'user_join'">
             <i
               ><b>{{ m.as }}</b> 加入了。</i
@@ -29,7 +37,7 @@
       <p>Channel: {{ channel }}</p>
     </div>
     <div class="container">
-      <div class="field">
+      <div class="field is-grouped">
         <div class="control">
           <input
             class="input"
@@ -38,6 +46,9 @@
             @keyup.enter="sendMessage()"
             placeholder="訊息"
           />
+        </div>
+        <div class="control">
+          <input type="file" class="input" ref="file" />
         </div>
       </div>
       <div class="field">
@@ -55,6 +66,7 @@ import ServerSdk from "@/utilities/ServerSDK";
 import type { IResponse } from "@/utilities/ServerSDK/types/IResponse";
 import {
   CreateMessageArchitect,
+  MessageArchitect,
   MessageType,
 } from "@/utilities/ServerSDK/types/MessageArchitect";
 import { Options, Vue } from "vue-class-component";
@@ -93,7 +105,31 @@ export default class MessageBox extends Vue {
     setTimeout(this.scrollToTop, ms);
   }
 
-  sendMessage() {
+  private reset(element: HTMLInputElement): void {
+    element.value = "";
+  }
+
+  private getFile(): File | null {
+    const file = this.$refs.file as HTMLInputElement;
+    let fileList: File | null = null;
+
+    if (file.files?.length && file.files.length > 0) {
+      fileList = file.files[0];
+    }
+
+    this.reset(file);
+    return fileList;
+  }
+
+  async sendMessage() {
+    const file = this.getFile();
+    let messageArchitect: MessageArchitect | undefined = undefined;
+
+    if (file) {
+      console.debug(`Uploading file: ${file}`);
+      messageArchitect = CreateMessageArchitect(MessageType.PICTURE, (await file.stream))
+    }
+
     if (this.messageToSent.length > 0) {
       this.sdk?.sendMessage(
         CreateMessageArchitect(MessageType.PLAIN, this.messageToSent)
