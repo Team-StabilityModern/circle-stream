@@ -4,29 +4,12 @@ export enum MessageType {
    */
   PLAIN = "plain",
   /**
-   * A picture.
+   * A Data URI. Suitable for non-streamed data.
    * 
-   * You have to specify `contentType` explicitly.
+   * It should be a valid URI just like this:
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
    */
-  PICTURE = "picture",
-  /**
-   * A picture.
-   * 
-   * You have to specify `contentType` explicitly.
-   */
-  VIDEO = "video",
-  /**
-   * A picture.
-   * 
-   * You have to specify `contentType` explicitly.
-   */
-  AUDIO_STREAM = "audio_stream",
-  /**
-   * A picture.
-   * 
-   * You have to specify `contentType` explicitly.
-   */
-  VIDEO_STREAM = "video_stream",
+  DATA_URI = "data_uri",
   /**
    * A data with the custom content type.
    * 
@@ -83,25 +66,17 @@ export function IsMessageArchitect(val: unknown): val is MessageArchitect {
 export function IsMessageArchitectFromUser(val: unknown): val is MessageArchitect {
   const v = val as MessageArchitect;
   const hasContentType = (type: MessageType, contentType: string | undefined): boolean => {
-    if (!(v.type === MessageType.PICTURE
-      || v.type === MessageType.VIDEO
-      || v.type === MessageType.AUDIO_STREAM
-      || v.type === MessageType.VIDEO_STREAM
-      || v.type === MessageType.CUSTOM)) return true;
-
+    if (!(v.type === MessageType.CUSTOM)) return true;
     return !!contentType;
   }
 
   return (
     // val is an instance of MessageArchitect
     IsMessageArchitect(val)
-    // and its v.type should be either PLAIN, PICTURE, VIDEO, STREAMS and custom data.
+    // and its v.type should be either PLAIN, DATA_URI and custom data.
     && (
       v.type === MessageType.PLAIN
-      || v.type === MessageType.PICTURE
-      || v.type === MessageType.VIDEO
-      || v.type === MessageType.AUDIO_STREAM
-      || v.type === MessageType.VIDEO_STREAM
+      || v.type === MessageType.DATA_URI
       || v.type === MessageType.CUSTOM
     )
     && hasContentType(v.type, v.contentType)

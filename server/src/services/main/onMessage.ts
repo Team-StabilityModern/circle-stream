@@ -17,10 +17,8 @@ const sendWhat = (as: string, mt: MessageType): string => {
   switch (mt) {
     case MessageType.PLAIN:
       return `${as} sent a plain text.`;
-    case MessageType.AUDIO_STREAM:
-      return `${as} start streaming audio.`;
-    case MessageType.VIDEO_STREAM:
-      return `${as} start streaming video.`;
+    case MessageType.DATA_URI:
+      return `${as} send a data URI.`
     default:
       return `${as} sent a ${mt}`;
   }
