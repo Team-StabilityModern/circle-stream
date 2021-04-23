@@ -14,7 +14,8 @@
     "sass": "^1.32.8",
     "sass-loader": "<11",
     "vue": "^3.0.0",
-    "vue-class-component": "^8.0.0-0"
+    "vue-class-component": "^8.0.0-0",
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",
@@ -22,6 +23,7 @@
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
@@ -30,16 +32,16 @@
     "@vue/test-utils": "^2.0.0-0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0-0",
-    "typescript": "^4.2.3",
-    "vue-jest": "^5.0.0-0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-hooks": "^4.0.8",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "prettier": "2.2.1"
+    "eslint-plugin-vue": "^7.0.0-0",
+    "prettier": "2.2.1",
+    "typescript": "^4.2.3",
+    "vue-jest": "^5.0.0-0"
   },
   "eslintConfig": {
     "root": true,
@@ -52,7 +54,9 @@
       "@vue/typescript",
       "prettier"
     ],
-    "plugins": ["prettier"],
+    "plugins": [
+      "prettier"
+    ],
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
