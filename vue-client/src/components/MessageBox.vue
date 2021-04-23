@@ -7,13 +7,10 @@
             <b>{{ m.as }}</b
             >: {{ m.data }}
           </p>
-          <p v-else-if="m.type === 'picture'">
+          <p v-else-if="m.type === 'data_uri'">
             <b>{{ m.as }}</b
             ><br />
-            <img
-              :src="`data:image/png;base64,${m.data}`"
-              :alt="`Picture from ${m.as}`"
-            />
+            <img :src="`${m.data}`" :alt="`Picture from ${m.as}`" />
           </p>
           <p v-else-if="m.type === 'user_join'">
             <i
@@ -66,9 +63,12 @@ import ServerSdk from "@/utilities/ServerSDK";
 import type { IResponse } from "@/utilities/ServerSDK/types/IResponse";
 import {
   CreateMessageArchitect,
-  MessageArchitect,
   MessageType,
 } from "@/utilities/ServerSDK/types/MessageArchitect";
+
+// eslint-disable-next-line no-unused-vars
+import type { MessageArchitect } from "@/utilities/ServerSDK/types/MessageArchitect";
+
 import { Options, Vue } from "vue-class-component";
 import { getHumanReadableCloseCode } from "@/utilities/ServerSDK/types/CustomCloseCode";
 
@@ -121,23 +121,40 @@ export default class MessageBox extends Vue {
     return fileList;
   }
 
-  async sendMessage() {
+  private toBase64(file: File): Promise<string | undefined> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result?.toString());
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  async sendMessage(): Promise<void> {
     const file = this.getFile();
     let messageArchitect: MessageArchitect | undefined = undefined;
 
     if (file) {
       console.debug(`Uploading file: ${file}`);
-      messageArchitect = CreateMessageArchitect(MessageType.PICTURE, (await file.stream))
-    }
+      const fileBase64 = await this.toBase64(file);
 
-    if (this.messageToSent.length > 0) {
-      this.sdk?.sendMessage(
-        CreateMessageArchitect(MessageType.PLAIN, this.messageToSent)
+      if (fileBase64) {
+        messageArchitect = CreateMessageArchitect(
+          MessageType.DATA_URI,
+          fileBase64
+        );
+      }
+    } else if (this.messageToSent.length > 0) {
+      messageArchitect = CreateMessageArchitect(
+        MessageType.PLAIN,
+        this.messageToSent
       );
-      this.messageToSent = "";
-
-      this.scrollToTopWithDelay();
     }
+
+    if (messageArchitect) this.sdk?.sendMessage(messageArchitect);
+    this.messageToSent = "";
+
+    this.scrollToTopWithDelay();
   }
 
   getHumanReadableCloseCode(code: number): string {
@@ -155,6 +172,7 @@ export default class MessageBox extends Vue {
       });
     });
     this.sdk.onMessageListeners.push((resp) => {
+      console.log(`Received a message from ${resp.as}`);
       this.messageReceived.push({ ...resp, id: this.id++ });
       this.scrollToTopWithDelay();
     });
