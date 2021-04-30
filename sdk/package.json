@@ -1,0 +1,11 @@
+{
+  "name": "cs-sdk",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "author": "pan93412",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "typescript": "^4.2.4"
+  }
+}
