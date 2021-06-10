@@ -11,7 +11,7 @@ const fastify = Fastify({
 
 /** The fastify options */
 const options = {
-  port: 3000,
+  port: 3001,
   ip: "0.0.0.0",
 };
 
