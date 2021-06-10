@@ -2,7 +2,7 @@ import { onClosedListener } from "./types/listeners/onClosedListener";
 import { onMessageListener } from "./types/listeners/onMessageListener";
 import { MessageArchitect } from "./types/MessageArchitect";
 export default class CSBrowserSdk {
-    private ip;
+    private address;
     private channel;
     private user;
     private readonly websocket;
@@ -16,8 +16,8 @@ export default class CSBrowserSdk {
      * The listener called when WebSocket closed. To register, use the `.push()` method.
      */
     readonly onClosedListeners: onClosedListener[];
-    constructor(ip: string, channel: string, user: string);
-    get IP(): string;
+    constructor(address: string, channel: string, user: string);
+    get Address(): string;
     get Channel(): string;
     get User(): string;
     get Closed(): boolean;

@@ -9,8 +9,8 @@ function warn(message) {
     console.warn(`ServerSdk: ${message}`);
 }
 class CSBrowserSdk {
-    constructor(ip, channel, user) {
-        this.ip = ip;
+    constructor(address, channel, user) {
+        this.address = address;
         this.channel = channel;
         this.user = user;
         this.closed = false;
@@ -26,13 +26,13 @@ class CSBrowserSdk {
         if (!globalThis.WebSocket) {
             throw new NotBrowserEnvironment_1.NotBrowserEnvironment("globalThis.WebSocket is null.");
         }
-        this.websocket = new WebSocket(`ws://${ip}:3000/${channel}/${user}`);
+        this.websocket = new WebSocket(`ws://${address}/${channel}/${user}`);
         this.websocket.addEventListener("close", this.onClose.bind(this));
         this.websocket.addEventListener("message", this.onMessage.bind(this));
     }
-    get IP() {
-        debug("getting IP");
-        return this.ip;
+    get Address() {
+        debug("getting Address");
+        return this.address;
     }
     get Channel() {
         debug("getting Channel");
