@@ -27,7 +27,7 @@ export default class CSBrowserSdk {
   readonly onClosedListeners: onClosedListener[] = [];
 
   constructor(
-    private ip: string,
+    private address: string,
     private channel: string,
     private user: string
   ) {
@@ -35,14 +35,14 @@ export default class CSBrowserSdk {
     if (!globalThis.WebSocket) {
       throw new NotBrowserEnvironment("globalThis.WebSocket is null.")
     }
-    this.websocket = new WebSocket(`ws://${ip}:3000/${channel}/${user}`);
+    this.websocket = new WebSocket(`ws://${address}/${channel}/${user}`);
     this.websocket.addEventListener("close", this.onClose.bind(this));
     this.websocket.addEventListener("message", this.onMessage.bind(this));
   }
 
-  get IP(): string {
-    debug("getting IP");
-    return this.ip;
+  get Address(): string {
+    debug("getting Address");
+    return this.address;
   }
 
   get Channel(): string {
