@@ -76,6 +76,10 @@ export default class CSBrowserSdk {
     }
   }
 
+  closeConnection(): void {
+    this.websocket.close();
+  }
+
   private onClose(c: CloseEvent) {
     debug("onClosed() was called");
     this.closed = true;
