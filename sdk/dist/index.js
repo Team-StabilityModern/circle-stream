@@ -60,6 +60,9 @@ class CSBrowserSdk {
             this.websocket.send(JSON.stringify(message));
         }
     }
+    closeConnection() {
+        this.websocket.close();
+    }
     onClose(c) {
         debug("onClosed() was called");
         this.closed = true;

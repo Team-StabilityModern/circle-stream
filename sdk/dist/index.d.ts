@@ -23,6 +23,7 @@ export default class CSBrowserSdk {
     get Closed(): boolean;
     get CloseCode(): number | undefined;
     sendMessage(message: MessageArchitect): void;
+    closeConnection(): void;
     private onClose;
     private onMessage;
 }
